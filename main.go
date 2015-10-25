@@ -26,6 +26,7 @@ var (
 	hook    = flag.String("hook", "", "A hook to run on every change")
 
 	loc  *time.Location
+	locatedNullDate time.Time
 	tpl  *template.Template
 	idRe = regexp.MustCompile(`^\d*$`)
 )
@@ -221,7 +222,13 @@ func handlePost(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	now := time.Now()
 	date, _ := time.ParseInLocation("2006-01-02", dateStr, loc)
+	date = date.Add(20*time.Hour)
+	if now.After(date) && date != locatedNullDate {
+		writeError(400, res, "We usually don't hold talks in the past.")
+		return
+	}
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -315,6 +322,8 @@ func main() {
 	if err != nil {
 		log.Fatal("Could not load timezone-data:", err)
 	}
+	locatedNullDate, _ := time.ParseInLocation("2006-01-02", "", loc)
+	locatedNullDate = locatedNullDate.Add(20*time.Hour)
 
 	tpl, err = template.New("").Delims("<<", ">>").ParseFiles(*gettpl)
 	if err != nil {
