@@ -222,6 +222,10 @@ func handlePost(res http.ResponseWriter, req *http.Request) {
 	}
 
 	date, _ := time.ParseInLocation("2006-01-02", dateStr, loc)
+	if time.Now().Sub(date) > 20*time.Hour && !date.IsZero() {
+		writeError(400, res, "Date of talk is set in the past. We usually don't hold talks in the past.")
+		return
+	}
 
 	if !date.IsZero() && date.Weekday() != time.Thursday {
 		writeError(400, res, "The date is not a thursday, we currently (and for the forseeable future) don't have talks on non-thursdays.")
