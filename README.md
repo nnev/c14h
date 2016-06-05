@@ -1,3 +1,3 @@
-# c14h - Talk manager for the NoName e.V.
+# The code has moved
 
-[![Build Status](https://travis-ci.org/nnev/c14h.svg)](https://travis-ci.org/nnev/c14h)
+Yarpnarp is now a part of [the new website repo](https://github.com/nnev/website)
